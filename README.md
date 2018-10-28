@@ -5,3 +5,8 @@ It contains code for running the incremental learning tasks, including 2D naviga
 
 The source code is coming soon.
 
+### Contact
+To ask questions or report issues, please open an issue on the [issues tracker](https://github.com/HeyuanMingong/irl_cs/issues), or email to njuwangzhi@gmail.com.
+
+
+
