@@ -7,6 +7,7 @@ It contains code for running the incremental learning domain tasks, including 2D
 This code requires the following:
 * python 3.\*
 * pytorch 0.4+
+* gym
 
 ### Data
 * For the 2D navigation domain, data is generated from `myrllib/envs/navigation.py`
@@ -20,6 +21,8 @@ This code requires the following:
 Also, the results for other demo scripts are shown in `exp/*`
 
 ### Contact 
+For safety reasons, the source code is coming soon.
+
 To ask questions or report issues, please open an issue on the [issues tracker](https://github.com/HeyuanMingong/irl_cs/issues), or email to njuwangzhi@gmail.com.
  
 
