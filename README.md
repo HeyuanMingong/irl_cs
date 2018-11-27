@@ -8,6 +8,7 @@ This code requires the following:
 * python 3.\*
 * pytorch 0.4+
 * gym
+* MuJoCo license
 
 ### Data
 * For the 2D navigation domain, data is generated from `myrllib/envs/navigation.py`
