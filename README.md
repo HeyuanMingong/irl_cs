@@ -1,6 +1,6 @@
 # Incremental Reinforcement Learning in Continuous Spaces
 
-This repo contains code accompaning the paper: [Zhi Wang, Han-Xiong Li, and Chunlin Chen, "Incremental reinforcement learning in continuous spaces via policy relaxation and importance weighting for dynamic environments", under review at IEEE Transactions on Neural Networks and Learning Systems, 2019.](https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=5962385)
+This repo contains code accompaning the paper: [Zhi Wang, Han-Xiong Li, and Chunlin Chen, "Incremental reinforcement learning in continuous spaces via policy relaxation and importance weighting", under review at IEEE Transactions on Neural Networks and Learning Systems, 2019.](https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=5962385)
 It contains code for running the incremental learning domain tasks, including 2D navigation, Reacher, Swimmer, Hopper, and HalfCheetah domains.
 
 ### Dependencies
