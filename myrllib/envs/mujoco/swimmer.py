@@ -9,6 +9,7 @@ class SwimmerVelEnv(SwimmerEnv):
         super(SwimmerVelEnv, self).__init__()
 
     def step(self, a):
+        a = np.clip(a, -1.0, 1.0)
         #ctrl_cost_coeff = 0.0001
         xposbefore = self.sim.data.qpos[0]
         self.do_simulation(a, self.frame_skip)

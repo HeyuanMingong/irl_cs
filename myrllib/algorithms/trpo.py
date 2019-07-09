@@ -25,23 +25,18 @@ def norm_sum1(weights, epsilon=1e-10):
     return weights/weights.sum()*weights.size(0)
 
 class TRPO(object):
-    def __init__(self, policy, baseline=None, tau=1.0, device='cpu', 
-            is_eps=1e-20, max_kl=1e-3, cg_iters=10, cg_damping=1e-2, 
+    def __init__(self, policy, tau=1.0, device='cpu', 
+            max_kl=1e-3, cg_iters=10, cg_damping=1e-2, 
             ls_max_steps=10, ls_backtrack_ratio=0.5, 
-            iw_smooth=None, iw_inv=True):
+            pr_smooth=1e-20, iw_smooth=None, iw_inv=True):
         self.policy = policy
-        if baseline == 'linear':
-            self.baseline = LinearFeatureBaseline(policy.input_size)
-        else:
-            self.baseline = None 
         self.tau = tau 
-        self.is_eps = is_eps
+        self.pr_smooth = pr_smooth; self.iw_smooth = iw_smooth
+        self.iw_inv = iw_inv
         self.max_kl = max_kl; self.cg_iters = cg_iters 
         self.cg_damping = cg_damping; self.ls_max_steps = ls_max_steps 
         self.ls_backtrack_ratio = ls_backtrack_ratio 
         self.to(device)
-        self.iw_smooth = iw_smooth 
-        self.iw_inv = iw_inv
 
     def kl_divergence(self, episodes, old_pi=None):
         pi = self.policy(episodes.observations)
@@ -71,26 +66,20 @@ class TRPO(object):
         return _product 
 
 
-    def surrogate_loss(self, episodes, old_pi=None, imp_sam=False, imp_wei=False):
+    def surrogate_loss(self, episodes, old_pi=None, pr=False, iw=False):
         with torch.set_grad_enabled(old_pi is None):
             pi = self.policy(episodes.observations)
             if old_pi is None:
                 old_pi = detach_distribution(pi)
             
-            if self.baseline is None:
-                advantages = episodes.returns 
-            else:
-                values = self.baseline(episodes)
-                advantages = episodes.gae(values, tau=self.tau)
-                advantages = weighted_normalize(advantages, weights=episodes.mask)
-
+            advantages = episodes.returns 
             log_ratio = pi.log_prob(episodes.actions) - old_pi.log_prob(episodes.actions)
             if log_ratio.dim() > 2:
                 log_ratio = torch.sum(log_ratio, dim=2)
             ratio = torch.exp(log_ratio)
 
             ### apply importance sampling 
-            if imp_sam:
+            if pr:
                 log_probs = pi.log_prob(episodes.actions)
                 if log_probs.dim() > 2:
                     log_probs = torch.sum(log_probs, dim=2)
@@ -103,8 +92,8 @@ class TRPO(object):
                 for log_prob, log_prob_old, mask in zip(log_probs, log_probs_old,
                         episodes.mask):
                     importance_ = importance_*torch.div(
-                            log_prob.exp()*mask + self.is_eps, 
-                            log_prob_old.exp()*mask + self.is_eps)
+                            log_prob.exp()*mask + self.pr_smooth, 
+                            log_prob_old.exp()*mask + self.pr_smooth)
                     #importance_ = norm_01(importance_)
                     importance_ = weighted_normalize(importance_)
                     importance_ = importance_ - importance_.min()
@@ -113,7 +102,7 @@ class TRPO(object):
                 importances = importances.detach()
 
             ### apply importance weighting
-            if imp_wei:
+            if iw:
                 weights = torch.sum(episodes.returns*episodes.mask,
                         dim=0)/torch.sum(episodes.mask,dim=0)
                 ### if the rewards are negtive, then use "rmax - r" as the weighting metric
@@ -126,15 +115,15 @@ class TRPO(object):
                     weights = weights/weights.sum()*weights.size(0)
                 #print(weights.max(), weights.min())
 
-            if imp_sam and imp_wei:
+            if pr and iw:
                 t_loss = torch.sum(
                         importances * advantages * ratio * episodes.mask,
                         dim=0)/torch.sum(episodes.mask, dim=0)
                 loss = -torch.mean(weights*t_loss)
-            elif imp_sam and not imp_wei:
+            elif pr and not iw:
                 loss = -weighted_mean(ratio * advantages * importances, 
                         weights=episodes.mask)
-            elif not imp_sam and imp_wei:
+            elif not pr and iw:
                 t_loss = torch.sum(advantages * ratio * episodes.mask,
                         dim=0)/torch.sum(episodes.mask,dim=0)
                 loss = -torch.mean(weights*t_loss)
@@ -149,13 +138,13 @@ class TRPO(object):
         return loss, kl, pi 
 
 
-    def step(self, episodes, imp_sam=False, imp_wei=False):
+    def step(self, episodes, pr=False, iw=False):
         max_kl = self.max_kl; cg_iters = self.cg_iters 
         cg_damping = self.cg_damping; ls_max_steps = self.ls_max_steps 
         ls_backtrack_ratio = self.ls_backtrack_ratio 
 
         old_loss, _, old_pi = self.surrogate_loss(episodes,
-                imp_sam=imp_sam, imp_wei=imp_wei)
+                pr=pr, iw=iw)
         grads = torch.autograd.grad(old_loss, self.policy.parameters())
         grads = parameters_to_vector(grads)
 
@@ -179,7 +168,7 @@ class TRPO(object):
             vector_to_parameters(old_params - step_size*step, 
                     self.policy.parameters())
             loss, kl, _ = self.surrogate_loss(episodes, old_pi=old_pi,
-                    imp_sam=imp_sam, imp_wei=imp_wei)
+                    pr=pr, iw=iw)
             improve = loss - old_loss 
             if (improve.item() < 0.0) and (kl.item() < max_kl):
                 break 
@@ -190,8 +179,6 @@ class TRPO(object):
 
     def to(self, device, **kwargs):
         self.policy.to(device, **kwargs)
-        if self.baseline is not None:
-            self.baseline.to(device, **kwargs)
         self.device = device
 
 

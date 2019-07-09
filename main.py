@@ -90,8 +90,8 @@ start_time = time.time()
 ### build a learner given a policy network
 def generate_learner(policy, pr_smooth=1e-20):
     if args.algorithm == 'trpo':
-        learner = TRPO(policy, baseline=args.baseline, device=device,
-                pr_smooth=pr_smooth, iw_smooth=args.iw_smooth,)
+        learner = TRPO(policy, device=device,
+                pr_smooth=PR_SMOOTH, iw_smooth=IW_SMOOTH, iw_inv=IW_INV)
     else:
         learner = REINFORCE(policy, lr=args.lr, device=device,
                 iw_smooth=IW_SMOOTH, pr_smooth=PR_SMOOTH)
@@ -103,6 +103,9 @@ sampler = BatchSampler(args.env, args.batch_size, num_workers=args.num_workers)
 state_dim = int(np.prod(sampler.envs.observation_space.shape))
 action_dim = int(np.prod(sampler.envs.action_space.shape))
 print('state dim: %d; action dim: %d'%(state_dim,action_dim))
+
+
+IW_INV = True
 
 ### get the task parameters for each experimental domain
 if args.env == 'Navigation2D-v1':
@@ -128,9 +131,11 @@ elif args.env == 'Navigation2D-v3':
     PR_SMOOTH = 0.1; RELAX_ITERS = 2; IW_SMOOTH = None
     NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
 
-elif args.env in ['HalfCheetahVel-v1', 'HopperVel-v1', 'SwimmerVel-v1']:
+elif args.env == 'SwimmerVel-v1':
     ### locomotion tasks, let the agent run at a dynamic velocity
     task = {'velocity':args.task[0]} 
+    PR_SMOOTH = 0.01; RELAX_ITERS = 0; IW_SMOOTH = None
+    NU = 0.5; RMAX = 200; PSI = 1.0; UPSILON = 0.01
 
 elif args.env == 'ReacherDyna-v1':
     ### locomotion tasks, reaching a dynamic goal by a two-linked robotic arm

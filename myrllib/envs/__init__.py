@@ -30,8 +30,9 @@ register(
 
 register(
         'HalfCheetahVel-v1',
-        entry_point = 'myrllib.envs.utils:mujoco_wrapper',
-        kwargs = {'entry_point': 'myrllib.envs.mujoco.half_cheetah:HalfCheetahVelEnv'},
+        entry_point = 'myrllib.envs.mojoco.half_cheetah:HalfCheetahVel',
+        #entry_point = 'myrllib.envs.utils:mujoco_wrapper',
+        #kwargs = {'entry_point': 'myrllib.envs.mujoco.half_cheetah:HalfCheetahVelEnv'},
         max_episode_steps = 100 
         )
 
@@ -61,22 +62,17 @@ register(
 
 register(
         'HopperVel-v1',
-        entry_point = 'myrllib.envs.utils:mujoco_wrapper',
-        kwargs = {'entry_point': 'myrllib.envs.mujoco.hopper:HopperVelEnv'},
-        max_episode_steps = 100 
-        )
-
-register(
-        'AntVel-v1',
-        entry_point = 'myrllib.envs.utils:mujoco_wrapper',
-        kwargs = {'entry_point': 'myrllib.envs.mujoco.ant:AntVelEnv'},
+        entry_point = 'myrllib.envs.mujoco.hopper:HopperVelEnv',
+        #entry_point = 'myrllib.envs.utils:mujoco_wrapper',
+        #kwargs = {'entry_point': 'myrllib.envs.mujoco.hopper:HopperVelEnv'},
         max_episode_steps = 100 
         )
 
 register(
         'SwimmerVel-v1',
-        entry_point = 'myrllib.envs.utils:mujoco_wrapper',
-        kwargs = {'entry_point': 'myrllib.envs.mujoco.swimmer:SwimmerVelEnv'},
+        entry_point = 'myrllib.envs.mujoco.swimmer:SwimmerVelEnv',
+        #entry_point = 'myrllib.envs.utils:mujoco_wrapper',
+        #kwargs = {'entry_point': 'myrllib.envs.mujoco.swimmer:SwimmerVelEnv'},
         max_episode_steps = 100 
         )
 
