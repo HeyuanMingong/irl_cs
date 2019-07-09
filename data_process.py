@@ -25,7 +25,7 @@ def arr_ave(arr, bs=1):
 ### observing the rewards of tested methods
 ### including: Random, Pretrained, PRPG, PR, IW, PR+IW
     
-DOMAIN = 'swimmer'
+DOMAIN = 'hopper'
 p_model = 'saves/%s'%DOMAIN; p_output = 'output/%s'%DOMAIN
 
 #rewards = np.load(os.path.join(p_model, 'rewards_pretrained.npy'))
@@ -34,7 +34,7 @@ p_model = 'saves/%s'%DOMAIN; p_output = 'output/%s'%DOMAIN
 if DOMAIN in ['navi_v1', 'navi_v2', 'navi_v3']:
     navigation_domains()
 elif DOMAIN in ['reacher_v1', 'reacher_v2', 'reacher_v3',
-                'swimmer']:
+                'swimmer', 'hopper']:
     mujoco_domains()  
 
 
