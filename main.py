@@ -141,11 +141,17 @@ elif args.env == 'ReacherDyna-v1':
 elif args.env == 'ReacherDyna-v2':
     ### reaching a stationary goal with different physical parameters
     task = int(args.task[0])
+    PR_SMOOTH = 0.01; RELAX_ITERS = 0; IW_SMOOTH = None
+    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
 
 elif args.env == 'ReacherDyna-v3':
     ### reaching a dynamic goal with different physical parameters
     task = {'goal':np.array([args.task[0], args.task[1]], dtype=np.float32),
             'phy': int(args.task[2])}
+    PR_SMOOTH = 0.01; RELAX_ITERS = 0; IW_SMOOTH = None
+    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
+
+
 print('Taks information', task)
 
 ### set the task, i.e., given an environment   

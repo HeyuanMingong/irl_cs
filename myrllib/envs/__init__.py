@@ -37,22 +37,25 @@ register(
 
 register(
         'ReacherDyna-v1',
-        entry_point = 'myrllib.envs.utils:mujoco_wrapper',
-        kwargs = {'entry_point': 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV1'},
+        entry_point = 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV1',
+        #entry_point = 'myrllib.envs.utils:mujoco_wrapper',
+        #kwargs = {'entry_point': 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV1'},
         max_episode_steps = 100 
         )
 
 register(
         'ReacherDyna-v2',
-        entry_point = 'myrllib.envs.utils:mujoco_wrapper',
-        kwargs = {'entry_point': 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV2'},
+        entry_point = 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV2',
+        #entry_point = 'myrllib.envs.utils:mujoco_wrapper',
+        #kwargs = {'entry_point': 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV2'},
         max_episode_steps = 100 
         )
 
 register(
         'ReacherDyna-v3',
-        entry_point = 'myrllib.envs.utils:mujoco_wrapper',
-        kwargs = {'entry_point': 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV3'},
+        entry_point = 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV3',
+        #entry_point = 'myrllib.envs.utils:mujoco_wrapper',
+        #kwargs = {'entry_point': 'myrllib.envs.mujoco.reacher:ReacherDynaEnvV3'},
         max_episode_steps = 100 
         )
 

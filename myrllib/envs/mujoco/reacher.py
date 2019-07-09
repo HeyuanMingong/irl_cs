@@ -24,6 +24,7 @@ class ReacherDynaEnvV1(ReacherEnv):
         return self._get_obs()
 
     def step(self, a):
+        a = np.clip(a, -1.0, 1.0)
         vec = self.get_body_com("fingertip")-self.get_body_com("target")
         reward_dist = - np.linalg.norm(vec)
         reward_ctrl = - 0.01 * np.square(a).sum()
@@ -51,6 +52,7 @@ class ReacherDynaEnvV2(mujoco_env.MujocoEnv, utils.EzPickle):
         self.goal = np.array([0.1,0.1], dtype=np.float32)
 
     def step(self, a):
+        a = np.clip(a, -1.0, 1.0)
         vec = self.get_body_com("fingertip")-self.get_body_com("target")
         reward_dist = - np.linalg.norm(vec)
         reward_ctrl = - np.square(a).sum()
@@ -93,6 +95,7 @@ class ReacherDynaEnvV3(mujoco_env.MujocoEnv, utils.EzPickle):
         self.goal = np.array([0.1,0.1], dtype=np.float32)
 
     def step(self, a):
+        a = np.clip(a, -1.0, 1.0)
         vec = self.get_body_com("fingertip")-self.get_body_com("target")
         reward_dist = - np.linalg.norm(vec)
         reward_ctrl = - np.square(a).sum()
