@@ -28,8 +28,8 @@ def arr_ave(arr, bs=1):
 DOMAIN = 'swimmer'
 p_model = 'saves/%s'%DOMAIN; p_output = 'output/%s'%DOMAIN
 
-rewards = np.load(os.path.join(p_model, 'rewards_pretrained.npy'))
-simple_plot([rewards])
+#rewards = np.load(os.path.join(p_model, 'rewards_pretrained.npy'))
+#simple_plot([rewards])
 
 if DOMAIN in ['navi_v1', 'navi_v2', 'navi_v3']:
     navigation_domains()
