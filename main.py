@@ -102,7 +102,6 @@ NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
 PR_SMOOTH = 0.1; RELAX_ITERS = 1
 
 
-
 ######################## Small functions ######################################
 ### build a learner given a policy network
 def generate_learner(policy, pr_smooth=1e-20):
