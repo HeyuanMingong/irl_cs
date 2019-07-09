@@ -30,7 +30,7 @@ register(
 
 register(
         'HalfCheetahVel-v1',
-        entry_point = 'myrllib.envs.mojoco.half_cheetah:HalfCheetahVel',
+        entry_point = 'myrllib.envs.mujoco.half_cheetah:HalfCheetahVelEnv',
         #entry_point = 'myrllib.envs.utils:mujoco_wrapper',
         #kwargs = {'entry_point': 'myrllib.envs.mujoco.half_cheetah:HalfCheetahVelEnv'},
         max_episode_steps = 100 

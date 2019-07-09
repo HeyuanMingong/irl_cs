@@ -22,16 +22,15 @@ class Navigation2DEnvV1(gym.Env):
         Meta-Learning for Fast Adaptation of Deep Networks", 2017 
         (https://arxiv.org/abs/1703.03400)
     """
-    def __init__(self, task={}):
+    def __init__(self):
         super(Navigation2DEnvV1, self).__init__()
-
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf,
             shape=(2,), dtype=np.float32)
         self.action_space = spaces.Box(low=-0.1, high=0.1,
             shape=(2,), dtype=np.float32)
 
-        self._task = task
-        self._goal = task.get('goal', np.array([0.25,0.25], dtype=np.float32))
+        ### the default goal position
+        self._goal =  np.array([0.25,0.25], dtype=np.float32)
         self._state = np.zeros(2, dtype=np.float32)
         self.seed()
 
@@ -40,8 +39,8 @@ class Navigation2DEnvV1(gym.Env):
         return [seed]
 
     def reset_task(self, task):
-        self._task = task
-        self._goal = task['goal']
+        ### task: a 2-dimensional array
+        self._goal = task
 
     def reset(self, env=True):
         self._state = np.zeros(2, dtype=np.float32)
@@ -59,36 +58,39 @@ class Navigation2DEnvV1(gym.Env):
 
         done = ((np.abs(x) < 0.01) and (np.abs(y) < 0.01))
 
-        return self._state, reward, done, self._task
+        return self._state, reward, done, {}
 
 
 class Navigation2DEnvV2(gym.Env):
-    def __init__(self, task={}):
+    def __init__(self):
         super(Navigation2DEnvV2, self).__init__()
-
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf,
             shape=(2,), dtype=np.float32)
         self.action_space = spaces.Box(low=-0.1, high=0.1,
             shape=(2,), dtype=np.float32)
 
-        self._task = task
+        ### the default goal position 
         self._goal = np.array([0.5, 0.5], dtype=np.float32)
         self._state = np.array([-0.5, -0.5], dtype=np.float32)
-        self.seed()
+
+        ### three puddles with different sizes
         self._r_small = 0.1; self._r_medium = 0.15; self._r_large = 0.2
         self._small = np.array([-0.3, 0.2], dtype=np.float32)
         self._medium = np.array([0.25, 0.25], dtype=np.float32)
         self._large = np.array([0.1, -0.1], dtype=np.float32)
+
+        self.seed()
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
     def reset_task(self, task):
-        self._task = task
-        self._small = task['small']
-        self._medium = task['medium']
-        self._large = task['large']
+        ### task: a 6-dimensional array
+        task = np.array(task, dtype=np.float32).reshape(-1)
+        self._small = task[:2]
+        self._medium = task[2:4]
+        self._large = task[4:6]
 
     def reset(self, env=True):
         self._state = np.array([-0.5,-0.5], dtype=np.float32)
@@ -112,7 +114,7 @@ class Navigation2DEnvV2(gym.Env):
         reward = reward_dist + reward_puddle + reward_ctrl 
         done = ((np.abs(x) < 0.01) and (np.abs(y) < 0.01))
 
-        return self._state, reward, done, self._task
+        return self._state, reward, done, {}
 
     def check_puddle(self, pos):
         navigable = True 
@@ -130,7 +132,7 @@ class Navigation2DEnvV2(gym.Env):
 
 
 class Navigation2DEnvV3(gym.Env):
-    def __init__(self, task={}):
+    def __init__(self):
         super(Navigation2DEnvV3, self).__init__()
 
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf,
@@ -138,7 +140,6 @@ class Navigation2DEnvV3(gym.Env):
         self.action_space = spaces.Box(low=-0.1, high=0.1,
             shape=(2,), dtype=np.float32)
 
-        self._task = task
         self._goal = np.array([0.5,0.5], dtype=np.float32)
         self._state = np.zeros(2, dtype=np.float32)
         self.seed()
@@ -151,13 +152,13 @@ class Navigation2DEnvV3(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-
     def reset_task(self, task):
-        self._task = task
-        self._small = task['small']
-        self._medium = task['medium']
-        self._large = task['large']
-        self._goal = task['goal']
+        ### task: a 8-dimensional array
+        task = np.array(task, dtype=np.float32).reshape(-1)
+        self._small = task[:2]
+        self._medium = task[2:4]
+        self._large = task[4:6]
+        self._goal = task[6:8]
 
     def reset(self, env=True):
         self._state = np.zeros(2, dtype=np.float32)
@@ -180,7 +181,7 @@ class Navigation2DEnvV3(gym.Env):
         reward = reward_dist + reward_puddle 
         done = ((np.abs(x) < 0.01) and (np.abs(y) < 0.01))
 
-        return self._state, reward, done, self._task
+        return self._state, reward, done, {}
 
     def check_puddle(self, pos):
         navigable = True 

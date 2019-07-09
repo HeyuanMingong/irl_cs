@@ -1,12 +1,10 @@
 #!/bin/bash
 
-:<<BLOCK
 echo "Train in the original environment, goal velocity 1.0"
 python main.py --env SwimmerVel-v1 --num_iter 100 --task 1.0 \
     --stage pretrain --batch_size 50 --algorithm trpo \
     --output output/swimmer --model_path saves/swimmer \
     --num_workers 16 --device cuda:4
-BLOCK
 
 
 echo "The environment changes, goal velocity 0.7"

@@ -4,19 +4,15 @@ from gym import utils
 from gym.envs.mujoco import HopperEnv 
 
 class HopperVelEnv(HopperEnv):
-    def __init__(self, task={}):
-        self._task = task
-        self._goal_vel = task.get('velocity', 1.0)
+    def __init__(self):
+        self._goal_vel = 1.0
         super(HopperVelEnv, self).__init__()
 
     def step(self, a):
+        a = np.clip(a, -1.0, 1.0)
         posbefore = self.sim.data.qpos[0]
         self.do_simulation(a, self.frame_skip)
         posafter, height, ang = self.sim.data.qpos[0:3]
-        #alive_bonus = 1.0
-        #reward = (posafter - posbefore) / self.dt
-        #reward += alive_bonus
-        #reward -= 1e-3 * np.square(a).sum()
         
         alive_bonus = 1.0
         forward_vel = (posafter - posbefore) / self.dt 
@@ -39,5 +35,5 @@ class HopperVelEnv(HopperEnv):
         ]).astype(np.float32).flatten()
 
     def reset_task(self, task):
-        self._task = task 
-        self._goal_vel = task['velocity']
+        ### task: a scalar
+        self._goal_vel = task

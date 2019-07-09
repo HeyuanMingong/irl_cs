@@ -28,10 +28,10 @@ class TRPO(object):
     def __init__(self, policy, tau=1.0, device='cpu', 
             max_kl=1e-3, cg_iters=10, cg_damping=1e-2, 
             ls_max_steps=10, ls_backtrack_ratio=0.5, 
-            pr_smooth=1e-20, iw_smooth=None, iw_inv=True):
+            pr_smooth=1e-20, iw_inv=True):
         self.policy = policy
         self.tau = tau 
-        self.pr_smooth = pr_smooth; self.iw_smooth = iw_smooth
+        self.pr_smooth = pr_smooth
         self.iw_inv = iw_inv
         self.max_kl = max_kl; self.cg_iters = cg_iters 
         self.cg_damping = cg_damping; self.ls_max_steps = ls_max_steps 
@@ -110,10 +110,6 @@ class TRPO(object):
                     weights = weights.max() - weights  
                 weights = weighted_normalize(weights)
                 weights = weights - weights.min()
-                if self.iw_smooth is not None:
-                    weights = weights + self.iw_smooth
-                    weights = weights/weights.sum()*weights.size(0)
-                #print(weights.max(), weights.min())
 
             if pr and iw:
                 t_loss = torch.sum(

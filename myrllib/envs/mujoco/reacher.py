@@ -6,14 +6,14 @@ from gym import utils
 
 
 class ReacherDynaEnvV1(ReacherEnv):
-    def __init__(self, task={}):
-        self._task = task
-        self.goal = task.get('goal', np.array([0.1,0.1], dtype=np.float32))
+    def __init__(self):
+        self.goal = np.array([0.1,0.1], dtype=np.float32)
         super(ReacherDynaEnvV1, self).__init__()
 
     def reset_task(self, task):
-        self._task = task
-        self.goal = task['goal']
+        ### task: a 2-dimensional array
+        task = np.array(task, dtype=np.float32).reshape(-1)
+        self.goal = task
 
     def reset_model(self):
         qpos = self.np_random.uniform(low=-.005, high=.005, size=self.model.nq) + self.init_qpos
@@ -84,6 +84,7 @@ class ReacherDynaEnvV2(mujoco_env.MujocoEnv, utils.EzPickle):
         ]).astype(np.float32).flatten()
 
     def reset_task(self, task):
+        task = int(task)
         utils.EzPickle.__init__(self)
         mujoco_env.MujocoEnv.__init__(self, 'reacher_%d.xml'%task, 2)
 
@@ -127,9 +128,11 @@ class ReacherDynaEnvV3(mujoco_env.MujocoEnv, utils.EzPickle):
         ]).astype(np.float32).flatten()
 
     def reset_task(self, task):
+        self.goal = np.array(task[:2], dtype=np.float32).reshape(-1)
         utils.EzPickle.__init__(self)
-        mujoco_env.MujocoEnv.__init__(self, 'reacher_%d.xml'%task['phy'], 2)
-        self.goal = task['goal']
+        phy_index = int(task[2])
+        mujoco_env.MujocoEnv.__init__(self, 'reacher_%d.xml'%phy_index, 2)
+        
 
 
 

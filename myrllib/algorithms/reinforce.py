@@ -26,12 +26,11 @@ def norm_sum1(weights, epsilon=1e-10):
 
 class REINFORCE(object):
     def __init__(self, policy, lr=1e-2, device='cpu', 
-            pr_smooth=1e-20, iw_smooth=None):
+            pr_smooth=1e-20):
         self.policy = policy 
         self.lr = lr
         self.opt = SGD(policy.parameters(), lr=lr)
         self.pr_smooth = pr_smooth 
-        self.iw_smooth = iw_smooth
         self.to(device)
 
     def inner_loss(self, episodes, pr=False, iw=False):
@@ -67,9 +66,6 @@ class REINFORCE(object):
             weights = weights.max() - weights 
             weights = weighted_normalize(weights)
             weights = weights - weights.min()
-            if self.iw_smooth is not None:
-                weights = weights + self.iw_smooth 
-                weights = weights/weights.sum()*weights.size(0)
 
         if pr and iw:
             ### the proposed method, PR + IW

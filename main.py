@@ -37,8 +37,7 @@ import copy
 ### personal lib
 from myrllib.episodes.episode import BatchEpisodes 
 from myrllib.samplers.sampler import BatchSampler 
-from myrllib.policies import NormalMLPPolicy, UniformPolicy  
-from myrllib.baselines.baseline import LinearFeatureBaseline
+from myrllib.policies import NormalMLPPolicy 
 from myrllib.algorithms.reinforce import REINFORCE 
 from myrllib.algorithms.trpo import TRPO 
 
@@ -86,16 +85,35 @@ print(args)
 device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
 start_time = time.time()
 
+
+####################### Hyperparameters ######################################
+"""
+If the rewards are positive, the Importance Weighting assigns a weight to 
+a learning episode that is proportional to its received reward; IW_INV = False.
+Else, the rewards are negative, the weight is inversely proportional to the 
+received reward; IW_INV = True.
+"""
+IW_INV = True
+
+### for the PRPG method
+NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
+
+### for the Policy Relaxation implementations
+PR_SMOOTH = 0.1; RELAX_ITERS = 1
+
+
+
 ######################## Small functions ######################################
 ### build a learner given a policy network
 def generate_learner(policy, pr_smooth=1e-20):
     if args.algorithm == 'trpo':
         learner = TRPO(policy, device=device,
-                pr_smooth=PR_SMOOTH, iw_smooth=IW_SMOOTH, iw_inv=IW_INV)
+                pr_smooth=PR_SMOOTH, iw_inv=IW_INV)
     else:
         learner = REINFORCE(policy, lr=args.lr, device=device,
-                iw_smooth=IW_SMOOTH, pr_smooth=PR_SMOOTH)
+                pr_smooth=PR_SMOOTH)
     return learner 
+
 
 ######################## Main Functions #######################################
 ### build a sampler given an environment
@@ -105,61 +123,28 @@ action_dim = int(np.prod(sampler.envs.action_space.shape))
 print('state dim: %d; action dim: %d'%(state_dim,action_dim))
 
 
-IW_INV = True
-
-### get the task parameters for each experimental domain
-if args.env == 'Navigation2D-v1':
-    ### the task is to reaching a dynamic goal by a point agent
-    task = {'goal':np.array([args.task[0], args.task[1]], dtype=np.float32)}
-    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
-    PR_SMOOTH = 0.1; RELAX_ITERS = 1; IW_SMOOTH = None
-
-elif args.env == 'Navigation2D-v2':
-    ### reaching a stationary goal with three dynamic puddles
-    task = {'small':np.array([args.task[0], args.task[1]], dtype=np.float32),
-            'medium':np.array([args.task[2], args.task[3]], dtype=np.float32),
-            'large':np.array([args.task[4], args.task[5]], dtype=np.float32)}
-    PR_SMOOTH = 0.1; RELAX_ITERS = 1; IW_SMOOTH = None
-    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
-
-elif args.env == 'Navigation2D-v3':
+"""
+'Navigation2D-v1': the task is to reaching a dynamic goal by a point agent
+'Navigation2D-v2': reaching a stationary goal with three dynamic puddles
+"""
+if args.env == 'Navigation2D-v3':
     ### reaching a dynamic goal with three dynamic puddles
-    task = {'small':np.array([args.task[0], args.task[1]], dtype=np.float32),
-            'medium':np.array([args.task[2], args.task[3]], dtype=np.float32),
-            'large':np.array([args.task[4], args.task[5]], dtype=np.float32),
-            'goal':np.array([args.task[6], args.task[7]], dtype=np.float32)}
-    PR_SMOOTH = 0.1; RELAX_ITERS = 2; IW_SMOOTH = None
-    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
+    RELAX_ITERS = 2
 
-elif args.env == 'SwimmerVel-v1':
+elif args.env in ['SwimmerVel-v1', 'HopperVel-v1', 'HalfCheetahVel-v1']:
     ### locomotion tasks, let the agent run at a dynamic velocity
-    task = {'velocity':args.task[0]} 
-    PR_SMOOTH = 0.01; RELAX_ITERS = 0; IW_SMOOTH = None
-    NU = 0.5; RMAX = 200; PSI = 1.0; UPSILON = 0.01
+    RELAX_ITERS = 0; NU = 0.5
+    if args.env == 'HopperVel-v1':
+        IW_INV = False
 
-elif args.env == 'ReacherDyna-v1':
-    ### locomotion tasks, reaching a dynamic goal by a two-linked robotic arm
-    task = {'goal':np.array([args.task[0], args.task[1]], dtype=np.float32)}
-    PR_SMOOTH = 0.01; RELAX_ITERS = 0; IW_SMOOTH = None
-    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
-
-elif args.env == 'ReacherDyna-v2':
-    ### reaching a stationary goal with different physical parameters
-    task = int(args.task[0])
-    PR_SMOOTH = 0.01; RELAX_ITERS = 0; IW_SMOOTH = None
-    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
-
-elif args.env == 'ReacherDyna-v3':
-    ### reaching a dynamic goal with different physical parameters
-    task = {'goal':np.array([args.task[0], args.task[1]], dtype=np.float32),
-            'phy': int(args.task[2])}
-    PR_SMOOTH = 0.01; RELAX_ITERS = 0; IW_SMOOTH = None
-    NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
-
-
-print('Taks information', task)
+elif args.env == ['ReacherDyna-v1', 'ReacherDyna-v2', 'ReacherDyna-v3]':
+    ### v1: reaching a dynamic goal by a two-linked robotic arm
+    ### v2: reaching a stationary goal with different physical parameters
+    ### v3: reaching a dynamic goal with different physical parameters
+    RELAX_ITERS = 0
 
 ### set the task, i.e., given an environment   
+print('Taks information', task)
 sampler.reset_task(task)
 
 
@@ -187,9 +172,6 @@ if args.stage == 'pretrain':
 ### in a new environment
 elif args.stage == 'finetune':
     ### generate a random policy for policy relaxation 
-    action_l = sampler.envs.action_space.low
-    action_h = sampler.envs.action_space.high
-    policy_uni = UniformPolicy(state_dim, action_dim, low=action_l, high=action_h)
     policy_relax = NormalMLPPolicy(state_dim, action_dim,
             hidden_sizes=(args.hidden_size,) * args.num_layers).to(device)
 

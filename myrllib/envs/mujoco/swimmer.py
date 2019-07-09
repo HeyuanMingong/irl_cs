@@ -3,9 +3,9 @@ from gym import utils
 from gym.envs.mujoco import SwimmerEnv
 
 class SwimmerVelEnv(SwimmerEnv):
-    def __init__(self, task={}):
-        self._task = task 
-        self._goal_vel = task.get('velocity', 1.0)
+    def __init__(self):
+        ### default goal velocity
+        self._goal_vel = 1.0
         super(SwimmerVelEnv, self).__init__()
 
     def step(self, a):
@@ -35,5 +35,5 @@ class SwimmerVelEnv(SwimmerEnv):
         return self._get_obs()
 
     def reset_task(self, task):
-        self._task = task
-        self._goal_vel = task['velocity']
+        ### task: a scalar
+        self._goal_vel = task
