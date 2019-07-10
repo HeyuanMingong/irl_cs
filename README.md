@@ -20,7 +20,10 @@ This code requires the following:
 ![experimental results for navigation domain](https://github.com/HeyuanMingong/irl_cs/blob/master/exp/navigation_v3.png)
 ![experimental results for swimmer domain](https://github.com/HeyuanMingong/irl_cs/blob/master/exp/swimmer.png)
 
-Also, the results for other demo scripts are shown in `exp/*`
+Also, the results for other scripts are shown in `exp/*`
+
+### Remark
+All the scripts deal with one demo trial in all investigated domains. To obtain the results as shown in the paper, implement many trials with random environment changes.
 
 ### Contact 
 To ask questions or report issues, please open an issue on the [issues tracker](https://github.com/HeyuanMingong/irl_cs/issues), or email to njuwangzhi@gmail.com.
