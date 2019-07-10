@@ -16,7 +16,7 @@ This code requires the following:
 
 ### Usage 
 * For example, to run the code in the 2D Navigation domain with type I dynamic environment, just run the bash script `./navigation_v1.sh`, also see the usage instructions in the script and `main.py`
-* When getting the results in `output/*/*.npy` files, plot the results using `data_process.py`. For example, the results for `./navigation_v3.sh` and './swimmer.sh' are as follows:
+* When getting the results in `output/*/*.npy` files, plot the results using `data_process.py`. For example, the results for `./navigation_v3.sh` and `./swimmer.sh` are as follows:
 ![experimental results for navigation domain](https://github.com/HeyuanMingong/irl_cs/blob/master/exp/navigation_v3.png)
 ![experimental results for swimmer domain](https://github.com/HeyuanMingong/irl_cs/blob/master/exp/swimmer.png)
 
