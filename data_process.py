@@ -25,7 +25,7 @@ def arr_ave(arr, bs=1):
 ### observing the rewards of tested methods
 ### including: Random, Pretrained, PRPG, PR, IW, PR+IW
     
-DOMAIN = 'navi_v2'
+DOMAIN = 'navi_v1'
 p_model = 'saves/%s'%DOMAIN; p_output = 'output/%s'%DOMAIN
 
 if DOMAIN in ['navi_v1', 'navi_v2', 'navi_v3']:
