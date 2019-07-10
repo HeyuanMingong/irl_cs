@@ -15,7 +15,6 @@ from torch.distributions.kl import kl_divergence
 from myrllib.utils.torch_utils import (weighted_mean, detach_distribution,
                                        weighted_normalize)
 from myrllib.utils.optimization import conjugate_gradient
-from myrllib.baselines.baseline import LinearFeatureBaseline 
 from torch.optim import Adam, SGD
 
 def norm_01(weights, epsilon=1e-10):
