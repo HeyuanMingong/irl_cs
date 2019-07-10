@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### change the argument 'task' to set the task in the original environment
-echo "Training in the original environment"
+echo -e "\nTraining in the original environment"
 python main.py --env Navigation2D-v3 --stage pretrain \
     --lr 0.01 --algorithm reinforce --batch_size 20 --num_iter 100 \
     --output output/navi_v3 --model_path saves/navi_v3 \
@@ -9,7 +9,7 @@ python main.py --env Navigation2D-v3 --stage pretrain \
 
 
 ### change the argument 'task' to set the task in the new environment
-echo "The environment changes to a new one..."
+echo -e "\nThe environment changes to a new one..."
 python main.py --env Navigation2D-v3 --stage finetune \
     --num_iter 100  --batch_size 20 --algorithm reinforce --lr 0.01 \
     --random --pretrained --prpg --pr --iw --priw \

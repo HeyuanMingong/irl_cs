@@ -109,11 +109,9 @@ TASK = args.task
 ### build a learner given a policy network
 def generate_learner(policy, pr_smooth=1e-20):
     if args.algorithm == 'trpo':
-        learner = TRPO(policy, device=device,
-                pr_smooth=PR_SMOOTH, iw_inv=IW_INV)
+        learner = TRPO(policy, pr_smooth=PR_SMOOTH, iw_inv=IW_INV, device=device)
     else:
-        learner = REINFORCE(policy, lr=args.lr, device=device,
-                pr_smooth=PR_SMOOTH)
+        learner = REINFORCE(policy, lr=args.lr, pr_smooth=PR_SMOOTH, device=device)
     return learner 
 
 
@@ -140,11 +138,13 @@ elif args.env in ['SwimmerVel-v1', 'HopperVel-v1', 'HalfCheetahVel-v1']:
         IW_INV = False
     TASK = args.task[0]
 
-elif args.env == ['ReacherDyna-v1', 'ReacherDyna-v2', 'ReacherDyna-v3']:
+elif args.env in ['ReacherDyna-v1', 'ReacherDyna-v2', 'ReacherDyna-v3']:
     ### v1: reaching a dynamic goal by a two-linked robotic arm
     ### v2: reaching a stationary goal with different physical parameters
     ### v3: reaching a dynamic goal with different physical parameters
     RELAX_ITERS = 0
+    if args.env == 'ReacherDyna-v2':
+        TASK = int(args.task[0])
 
 ### set the task, i.e., given an environment   
 print('Taks information', TASK)

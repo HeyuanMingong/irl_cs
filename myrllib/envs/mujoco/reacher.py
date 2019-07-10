@@ -84,7 +84,6 @@ class ReacherDynaEnvV2(mujoco_env.MujocoEnv, utils.EzPickle):
         ]).astype(np.float32).flatten()
 
     def reset_task(self, task):
-        task = int(task)
         utils.EzPickle.__init__(self)
         mujoco_env.MujocoEnv.__init__(self, 'reacher_%d.xml'%task, 2)
 
