@@ -101,6 +101,9 @@ NU = 0.8; RMAX = 200; PSI = 1.0; UPSILON = 0.01
 ### for the Policy Relaxation implementations
 PR_SMOOTH = 0.1; RELAX_ITERS = 1
 
+### task information
+TASK = args.task
+
 
 ######################## Small functions ######################################
 ### build a learner given a policy network
@@ -135,16 +138,17 @@ elif args.env in ['SwimmerVel-v1', 'HopperVel-v1', 'HalfCheetahVel-v1']:
     RELAX_ITERS = 0; NU = 0.5
     if args.env == 'HopperVel-v1':
         IW_INV = False
+    TASK = args.task[0]
 
-elif args.env == ['ReacherDyna-v1', 'ReacherDyna-v2', 'ReacherDyna-v3]':
+elif args.env == ['ReacherDyna-v1', 'ReacherDyna-v2', 'ReacherDyna-v3']:
     ### v1: reaching a dynamic goal by a two-linked robotic arm
     ### v2: reaching a stationary goal with different physical parameters
     ### v3: reaching a dynamic goal with different physical parameters
     RELAX_ITERS = 0
 
 ### set the task, i.e., given an environment   
-print('Taks information', task)
-sampler.reset_task(task)
+print('Taks information', TASK)
+sampler.reset_task(TASK)
 
 
 ### in an original environment
